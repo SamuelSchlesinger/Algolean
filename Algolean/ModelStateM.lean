@@ -199,12 +199,12 @@ def costStateM [Monad m] [AddZero Cost]
 section State
 
 /-- Joint execution of a pure program preserves the state and records zero cost. -/
-@[simp, grind =] theorem runStateM_pure_state [AddZero Cost]
+@[grind =] theorem runStateM_pure_state [AddZero Cost]
     (M : ModelStateM Q (StateM σ) Cost) (a : α) (s : σ) :
     ((pure a : Prog Q α).runStateM M).run s = ((⟨a, 0⟩ : AddWriter Cost α), s) := rfl
 
 /-- Joint execution supplies the same query outcome to the continuation and the cost sum. -/
-@[simp, grind =] theorem runStateM_liftBind_state [AddZero Cost]
+@[grind =] theorem runStateM_liftBind_state [AddZero Cost]
     (M : ModelStateM Q (StateM σ) Cost) (q : Q α) (f : α → Prog Q β) (s : σ) :
     (runStateM (FreeM.liftBind q f) M).run s =
       let first := (M.runQuery q).run s
@@ -212,7 +212,7 @@ section State
       ((⟨rest.fst.ret, first.fst.tell + rest.fst.tell⟩ : AddWriter Cost β), rest.snd) := rfl
 
 /-- Joint execution rule for the lifted-query bind notation. -/
-@[simp, grind =] theorem runStateM_lift_bind_state [AddZero Cost]
+@[grind =] theorem runStateM_lift_bind_state [AddZero Cost]
     (M : ModelStateM Q (StateM σ) Cost) (q : Q α) (f : α → Prog Q β) (s : σ) :
     (runStateM (FreeM.lift q >>= f) M).run s =
       let first := (M.runQuery q).run s
