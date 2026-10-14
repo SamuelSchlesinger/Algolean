@@ -13,10 +13,16 @@ public import Algolean.ModelM
 # Monadic query models with joint state and cost semantics
 
 `ModelStateM` interprets each query with its result and cost in the same monadic execution.
-Unlike `ModelM`, costs may depend on the state or on the query outcome. The monad remains generic:
-stateful and probabilistic interpretations both retain the correlation between results and costs.
-`Prog.evalStateM` evaluates a program, `Prog.runStateM` records its result and accumulated cost,
-and `Prog.costStateM` returns the accumulated cost.
+Unlike `ModelM`, costs may depend on the state or on the query outcome. In order to track 
+this, we lift the query into an `AddWriterT Cost m a` transformer which allows cost tracking 
+to depend on how the execution state, that is hidden in the model changes. For instance, 
+when the  memory and registers of the WordRAM model are hidden, we can still track the 
+cells that are written to, which allows us to assign space complexity. The monad 
+remains generic: stateful and probabilistic interpretations both retain the correlation 
+between results and costs. 
+- `Prog.evalStateM` evaluates a program, 
+- `Prog.runStateM` records its result and accumulated cost, and
+- `Prog.costStateM` returns the accumulated cost.
 
 `ModelStateM.handler` and `ModelStateM.hasHandler` provide weakest-precondition semantics
 for `mvcgen` when the monad has a `Std.Do.WPMonad` instance.
